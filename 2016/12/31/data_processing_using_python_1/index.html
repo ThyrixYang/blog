@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>Learned, then implement | python数据处理（一）</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox-1.3.4.css">
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+</head>
+
+<body>
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/blog/" title="Learned, then implement"><span class="octicon octicon-mark-github"></span> Learned, then implement</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/blog/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/blog/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="Categories">Categories</a>
+        
+              
+              <a href="/blog/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="OpenSource">OpenSource</a>
+        
+              
+              <a href="/blog/message/"  class=" site-header-nav-item hvr-underline-from-center" title="MessageBoard">MessageBoard</a>
+        
+      </nav>
+  </div>
+</header>
+
+	
+<section class="collection-head geopattern" data-pattern-id="python数据处理（一）" >
+    <div class="container">
+        <div class="collection-title">
+            <h1 class="collection-header">
+                python数据处理（一）
+            </h1>
+            
+                <div class="collection-info">
+                    <span class="meta-info">
+                        <span class="octicon octicon-calendar"></span>
+                        <time datetime="2016-12-31T12:00:00.000Z" itemprop="datePublished">2016-12-31</time>
+                    </span>
+                    
+                        <span class="meta-info">
+                            <span class="octicon octicon-file-directory"></span>
+                            <a href='/categories/学习笔记/' title=''>学习笔记</a>
+                        </span>
+                    
+                </div>
+            
+        </div>
+    </div>
+</section>
+	<section class="container">
+    <div class="columns">
+        <!-- -->
+        <div class="column three-fourths">
+            <article class="article-content markdown-body">
+                <h2 id="使用python进行数据处理（一）"><a href="#使用python进行数据处理（一）" class="headerlink" title="使用python进行数据处理（一）"></a>使用python进行数据处理（一）</h2><h4 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h4><p>{}括起来的就是字典，大概用法如下：</p>
+<pre><code class="python">dic = {}
+dic[3] = 4
+dic[&quot;sfe&quot;] = 2
+#　查看变量是否在字典中
+if var in dic:
+    code
+if var not in dic:
+    code
+# 设定默认值(如果当前已经存在则不会修改值)
+dic.setdefault(key, val)
+</code></pre>
+<p>所有key都带默认值的字典：</p>
+<pre><code class="python"># 默认值是int类型，就是int() = 0
+from collections import defaultdict
+dic = defaultdict(int)
+</code></pre>
+<p>有个OrderedDict可以记住插入的顺序。</p>
+<p>遍历字典：</p>
+<pre><code class="python">for key, value in dic.items():
+for key in dic.keys():
+for value in dic.values():
+</code></pre>
+<p>计数器</p>
+<pre><code class="python">from collections import Counter
+words = sentence.split()
+cnt = Counter(words)
+print cnt[key]
+</code></pre>
+<p>字典套字典：<br>要用一个lambda函数</p>
+<pre><code class="python">dic2 = defaultdict(lambda :defaultdict(int))
+dic2[key1][key2] = value
+</code></pre>
+<h4 id="python数组tuple"><a href="#python数组tuple" class="headerlink" title="python数组tuple"></a>python数组tuple</h4><p>支持in 和　not in 操作</p>
+<p>支持求min(), max()</p>
+<p>顺序存储, 不可改变值，可以连接</p>
+<p>可以在里面嵌套一个可以改变值的容器，比如list</p>
+<pre><code class="python">tup1 = 1, 2, 3
+tup2 = (1, 2, 3)
+tup3 = tup1 + tup2
+# 切片
+a[1:]
+a[1:3]
+a[1:6:2]
+a[:-1]
+# 逆序输出
+a[::-1]
+</code></pre>
+<p>python里负数的下标是有意义的，就是从后往前数的值。</p>
+<p>tuple可以作为字典的key</p>
+<p>namedtuple如果只存储数据的话类似c的结构体。</p>
+<h4 id="set"><a href="#set" class="headerlink" title="set"></a>set</h4><pre><code class="python">str = &quot;a b c d&quot;
+Set = set(str.split())
+num = len(Set)
+Seti = Set1.intersection(Set2)
+Setu = Set1.union(Set2)
+# 比较两个相同长度的数组有多少个一样的值（同一位置）
+print　jaccard_similarity_score(a,b)
+# 对于统计来说，可以这样做
+a = [ 1 if w in str1 else 0 for w in unionstr]
+# 以上代码相当于排序去重后检验两个数组是否存在对应的值
+# 这样就可以直接调用上面那个函数了
+</code></pre>
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><p>list的切片和tuple是一样的，区别主要在于list可以改变。</p>
+<p>可以当stack和queue用。</p>
+<p>range生成的是一个list</p>
+<pre><code class="python">a = []
+a.append(val)
+a.pop()
+a.pop(0) # 这就是从前面pop了
+
+from random import shuffle
+shuffle(a)
+a.sort()
+a.reverse()
+b = range(2,23)
+a.extend(b) # 连接list
+
+
+# 一些用法
+b = [pow(x, 2) for x in a if x &lt; 0]
+b = {x:pow(y, 2) for x, y in dic.items()}
+# 可以写一个函数代替pow就可以实现数据筛选等功能
+b = tuple(process(x) for x in a)
+</code></pre>
+<h4 id="iterator-generator-iterable"><a href="#iterator-generator-iterable" class="headerlink" title="iterator, generator, iterable"></a>iterator, generator, iterable</h4><p>iterator实际上就是一个提供迭代方法的类。</p>
+<p>需要定义<strong>iter</strong>() 和 next()两个函数</p>
+<p>对于实现了迭代器的方法可以比较方便的遍历</p>
+<pre><code class="python"># 文件是可以使用迭代器按行遍历的
+f = open(&quot;file&quot;)
+for item in iter(f):
+    print item
+</code></pre>
+<p>具体如何先不管了。。。</p>
+<pre><code class="python">#　编写一个generator
+def mgen(low, high):
+    for x in range(low, high):
+        yield x**2
+
+for i in mgen(1, 20):
+    code
+</code></pre>
+<p>与一般函数的区别就是最后返回用yield</p>
+<h4 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h4><pre><code class="python">#　函数赋值
+def fun(a):
+asdf = fun
+asdf(a)
+</code></pre>
+<p>可以在一个函数里嵌套定义函数。</p>
+<p>函数的参数也可以是函数。</p>
+<p>还可以返回函数。</p>
+<p>（python的类型还真是随意。。。<br>但是作为c过来的, 感觉并不会经常用这种东西）</p>
+<h5 id="装饰器"><a href="#装饰器" class="headerlink" title="装饰器"></a>装饰器</h5><p>装饰器提供了一种代码复用方式，不过需要程序逻辑符合切片处理的模式。</p>
+<h5 id="lambda函数"><a href="#lambda函数" class="headerlink" title="lambda函数"></a>lambda函数</h5><pre><code class="python"># 匿名函数
+# x是参数，冒号后是返回值
+lambda x: x**2
+# 相当于
+def f(x):
+    return x**2
+f(x)
+</code></pre>
+<h5 id="map函数"><a href="#map函数" class="headerlink" title="map函数"></a>map函数</h5><pre><code class="python"># 遍历一遍迭代器，对每个元素作用函数func
+# 返回一个list
+map(func, iterable)
+# 经常与匿名函数一起用
+# 可以传多个参数，此时传入的数组长度必须相同
+map(pow, a, b)
+# 则a, b分别作为函数的第一个和第二个参数
+</code></pre>
+<h5 id="选择器-filter"><a href="#选择器-filter" class="headerlink" title="选择器(filter)"></a>选择器(filter)</h5><pre><code class="python"># 每个元素用func检验，返回一个都是true的list
+Filter(func, iterable)
+</code></pre>
+<h5 id="zip-和-操作符"><a href="#zip-和-操作符" class="headerlink" title="zip, * 和　** 操作符"></a>zip, * 和　** 操作符</h5><pre><code class="python">zip(a, b)
+# 把两个list成对打包起来
+x, y = zip(*c)
+# 打包的逆过程, 但是把第一行的结果再用第二行处理后
+# 并不能得到原来的a, b.....
+# 这个可以用在函数传参数上
+a = (2, 3)
+pow(*a)
+# **可以用来处理字典，得到若干有值的变量
+def func(a, b):
+return a * b
+
+dic = {&#39;a&#39;: 3, &#39;b&#39;: 4}
+func(**dic)
+
+# 任意参数的函数
+def func(*args):
+# 这个args实际上就是一个tuple
+</code></pre>
+<p>zip在打包的时候要算出两个iterable的所有值。<br>而izip可以在使用值的时候再计算。</p>
+<h5 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h5><p>1.Gopi Subramanian, Python Data Science Cookbook</p>
+
+            </article>
+            
+                <div class="share">
+                    <!--开启分享-->
+<div class="share-component" data-disabled="google,twitter,facebook" data-description=""></div>
+
+<script src="/blog/js/share.min.js"></script>
+
+                </div>    
+            
+            
+                
+<div class="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    /**
+    * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+
+    s.src = '//ThyrixYang.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+            
+        </div>
+        <div class="column one-fourth">
+            
+                
+                
+
+
+<h3>Post Directory</h3>
+
+<div id="post-directory-module">
+	<section class="post-directory">
+		<p><strong class="toc-title">文章目录</strong></p>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#使用python进行数据处理（一）"><span class="toc-text">使用python进行数据处理（一）</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#字典"><span class="toc-text">字典</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#python数组tuple"><span class="toc-text">python数组tuple</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#set"><span class="toc-text">set</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#list"><span class="toc-text">list</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#iterator-generator-iterable"><span class="toc-text">iterator, generator, iterable</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#函数"><span class="toc-text">函数</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#装饰器"><span class="toc-text">装饰器</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#lambda函数"><span class="toc-text">lambda函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#map函数"><span class="toc-text">map函数</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#选择器-filter"><span class="toc-text">选择器(filter)</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#zip-和-操作符"><span class="toc-text">zip, * 和　** 操作符</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#reference"><span class="toc-text">reference</span></a></li></ol></li></ol></li></ol></li></ol>
+	</section>
+</div>
+            
+        </div>
+    </div>
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2016
+                <span title="yumemor">yumemor</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/yumemor/hexo-theme-primer" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/blog/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/categories/"  title="Categories">Categories</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/open-source/"  title="OpenSource">OpenSource</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/message/"  title="MessageBoard">MessageBoard</a>
+                  </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    <span class="octicon octicon-rss" style="color:orange;"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</footer>
+
+		<script src="/blog/js/geopattern.js"></script>
+		<script src="/blog/js/highlight.pack.js"></script>
+		<script src="/blog/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+		
+			<script src="/blog/js/toc.js"></script>
+		
+
+		
+
+		<script src="/blog/js/index.js"></script>
+
+		 <script src="/blog/js/popular_repo.js"></script> 
+
+	</body>
+</html>

@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>Learned, then implement</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox-1.3.4.css">
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+</head>
+<body class="home">
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/blog/" title="Learned, then implement"><span class="octicon octicon-mark-github"></span> Learned, then implement</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/blog/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/blog/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="Categories">Categories</a>
+        
+              
+              <a href="/blog/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="OpenSource">OpenSource</a>
+        
+              
+              <a href="/blog/message/"  class=" site-header-nav-item hvr-underline-from-center" title="MessageBoard">MessageBoard</a>
+        
+      </nav>
+  </div>
+</header>
+
+	<section class="banner-false">
+    <div class="collection-head">
+        <div class="container">
+            <div class="collection-title">
+                <h1 class="collection-header" id="site-description">
+                    
+                </h1>
+                <div class="collection-info">
+                    
+                    
+                        <span class="meta-info">
+                            
+                                <span class="octicon octicon-location">
+                                   
+                                        WhuHan, China
+                                    
+                                </span>
+                                
+                            
+                        </span>
+                    
+                        <span class="meta-info">
+                            
+                                <span class="octicon octicon-mark-github">
+                                   
+                                </span>
+                                
+                                    <a href="http://github.com/ThyrixYang" target="_blank">ThyrixYang</a>
+                                
+                            
+                        </span>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+	   <section class="container">
+    <div class="columns">
+        <div class="column two-thirds">
+            
+                  <article id="post-learning_gprof_1" class="repo-list">
+    <div class="repo-list-item" >
+      <h3 class="repo-list-name" itemprop="name">
+        
+  
+      <a class="article-title" href="/blog/2017/02/01/learning_gprof_1/">Learning gprof</a>
+  
+
+      </h3>
+      <div class="repo-list-description">
+        
+          <p>使用gprof进行性能分析非常方便，只需要在编译的时候增加一个-gp选项即可。</p>
+<p>编译命令如下</p>
+<blockquote>
+<p>g++ -Wall -pg test_gprof.c -o test_gprof</p>
+</blockquote>
+<p>生成运行信息</p>
+<blockquote>
+<p>gprof -b test_gprof gmon.out</p>
+</blockquote>
+<p>加了-b选项可以去掉自带的说明（非常长。。。）</p>
+<p>输出的东西可以重定向到文件里看，比如</p>
+<blockquote>
+<p>gprof -b test_gprof gmon.out &gt; out</p>
+</blockquote>
+<p>为了看懂输出信息我改了一下代码，最后是这样的：</p>
+<pre><code class="cpp">//test_gprof.c
+#include&lt;stdio.h&gt;
+#include&lt;math.h&gt;
+void func3() {
+    for(int i = 0; i &lt; 1e8; i++);
+    printf(&quot;\n Inside func3\n&quot;);
+    return;
+}
+void func4() {
+    for(int i = 0; i &lt; 1e8; i++);
+    func3();
+    return;
+}
+void new_func1(void)
+{
+    printf(&quot;\n Inside new_func1()\n&quot;);
+    int i = 0;
+    func3();
+    for(;i&lt;1e8;i++);
+    func3();
+    func4();
+    return;
+}
+void func1(void)
+{
+    printf(&quot;\n Inside func1 \n&quot;);
+    int i = 0;
+
+    for(;i&lt;1e8;i++);
+    new_func1();
+
+    return;
+}
+void func5(int x) {
+    if(x &gt; 1e4) return;
+    for(int i = 0; i &lt; 1e4; i++) 
+        int y = sqrt((double)x);
+    func5(x + 1);
+}
+static void func2(void)
+{
+    printf(&quot;\n Inside func2 \n&quot;);
+    int i = 0;
+
+    for(;i&lt;1e8;i++);
+    func3();
+    func5(0);
+    return;
+}
+
+int main(void)
+{
+    printf(&quot;\n Inside main()\n&quot;);
+    int i = 0;
+
+    for(;i&lt;1e8;i++);
+    func1();
+    func2();
+
+    return 0;
+}
+</code></pre>
+<p>这个里面相比reference增加了一些东西，比如递归调用，一个函数在多处被调用。。。</p>
+<p>输出如下：</p>
+<pre><code>Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 38.65      0.90     0.90        4     0.22     0.22  func3()
+ 12.60      1.19     0.29                             main
+ 10.86      1.44     0.25        1     0.25     0.25  func5(int)
+  9.99      1.67     0.23        1     0.23     1.35  func1()
+  9.56      1.89     0.22        1     0.22     0.45  func4()
+  9.56      2.12     0.22        1     0.22     0.70  func2()
+  9.56      2.34     0.22        1     0.22     1.12  new_func1()
+
+
+            Call graph
+
+
+granularity: each sample hit covers 2 byte(s) for 0.43% of 2.34 seconds
+
+index % time    self  children    called     name
+                                                 &lt;spontaneous&gt;
+[1]    100.0    0.29    2.05                 main [1]
+                0.23    1.12       1/1           func1() [2]
+                0.22    0.48       1/1           func2() [5]
+-----------------------------------------------
+                0.23    1.12       1/1           main [1]
+[2]     57.7    0.23    1.12       1         func1() [2]
+                0.22    0.89       1/1           new_func1() [3]
+-----------------------------------------------
+                0.22    0.89       1/1           func1() [2]
+[3]     47.7    0.22    0.89       1         new_func1() [3]
+                0.45    0.00       2/4           func3() [4]
+                0.22    0.22       1/1           func4() [6]
+-----------------------------------------------
+                0.22    0.00       1/4           func4() [6]
+                0.22    0.00       1/4           func2() [5]
+                0.45    0.00       2/4           new_func1() [3]
+[4]     38.4    0.90    0.00       4         func3() [4]
+-----------------------------------------------
+                0.22    0.48       1/1           main [1]
+[5]     29.8    0.22    0.48       1         func2() [5]
+                0.25    0.00       1/1           func5(int) [7]
+                0.22    0.00       1/4           func3() [4]
+-----------------------------------------------
+                0.22    0.22       1/1           new_func1() [3]
+[6]     19.1    0.22    0.22       1         func4() [6]
+                0.22    0.00       1/4           func3() [4]
+-----------------------------------------------
+                               10001             func5(int) [7]
+                0.25    0.00       1/1           func2() [5]
+[7]     10.8    0.25    0.00       1+10001   func5(int) [7]
+                               10001             func5(int) [7]
+-----------------------------------------------
+
+
+Index by function name
+
+   [2] func1()                 [7] func5(int)              [1] main
+   [4] func3()                 [3] new_func1()
+   [6] func4()                 [5] func2()
+</code></pre><p>这个东西怎么看呢？</p>
+<p>首先是flat profile, 它显示了每个函数运行的时间。</p>
+<p>从左到右各列分别是：这个函数所用运行时间的百分比，列表从上到下的累计时间，这个函数自身所用的总时间（不包括它调用的其他函数，但是调用的库函数是算在这个时间里的），这个函数被其他函数调用的次数（递归调用不算在内），单次调用该函数所用时间（不包括调用其他函数），单词调用该函数所用时间（包括调用的其他函数），函数名。</p>
+<p>还有call graph</p>
+<p>最右边是函数名，开始的若干行有缩进，表示调用该函数的函数（父函数），该函数的函数名顶格写，后面又是若干行带缩进的表示该函数调用的函数（子函数）。</p>
+<p>相当于带有向边的一个图。</p>
+<p>main函数没有被其他函数调用所以父函数是<spontaneous></spontaneous></p>
+<p>每列从左到右表示：函数自身所用时间，子函数所用时间，调用次数。</p>
+<p>调用次数</p>
+<p>在父函数行表示：对应父函数调用了该函数几次/该函数总的调用次数。<br>该函数行表示：这个函数一共被调用了几次。<br>在子函数行表示：该函数调用了这个子函数几次/子函数被调用的总次数。</p>
+<p>递归函数的调用次数里是把自身调用和其他函数调用分开算的。</p>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><p><a href="http://www.thegeekstuff.com/2012/08/gprof-tutorial" target="_blank" rel="external">GPROF Tutorial – How to use Linux GNU GCC Profiling Tool</a></p>
+
+        
+      </div>
+      <p class="repo-list-meta">
+        <span class="meta-info">
+          <span class="octicon octicon-calendar"></span>
+           <time datetime="2017-02-01T12:00:00.000Z" itemprop="datePublished">2017-02-01</time>
+        </span>
+
+        
+          <span class="meta-info">
+            <span class="octicon octicon-file-directory"></span>
+            <a href='/categories/学习笔记/' title=''>学习笔记</a>
+          </span>
+        
+      
+        <!--
+          
+        -->
+
+      </p>
+    </div>
+  </article>
+            
+        </div>
+        <div class="column one-third">
+          <h3>Search</h3>
+
+<div id="site_search">
+
+	<!-- Google -->
+	
+		<form action="http://www.google.com/search?" data-site="http://thyrixyang.gitbub.io/blog">
+	    	<input type="text" id="search_box" name="q" placeholder="Search" style="width: 253px;">
+	    	<button type="button" class="btn btn-default" id="site_search_do"><span class="octicon octicon-search"></span></button>
+	    </form>
+	
+
+	<!-- 本地搜索 -->
+	
+
+</div>
+<h3>Popular Repositories</h3>
+
+    
+    <div class="popular-container"></div>
+    
+    <script type="text/template" id="popular-list-template">
+        <a href="{%=clone_url%}" class="card text-center" target="_blank">
+            <div class="thumbnail">
+                <div class="card-image geopattern" data-pattern-id="{%=name%}">
+                    <div class="card-image-cell">
+                        <h3 class="card-title">
+                            {%=name%}
+                        </h3>
+                    </div>
+                </div>
+                <div class="caption">
+                    <div class="card-description">
+                        <p class="card-text">
+                            {%=description%}
+                        </p>
+                    </div>
+                    <div class="card-text">
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="{%=stargazers_count%} stars">
+                            <span class="octicon octicon-star"></span> {%=stargazers_count%}
+                        </span>
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="{%=forks_count%} forks">
+                            <span class="octicon octicon-git-branch"></span> {%=forks_count%}
+                        </span>
+                        <span class="meta-info tooltipped tooltipped-n" aria-label="最后更新时间：{%=updated_at%}">
+                            <span class="octicon octicon-clock"></span>
+                            <time datetime="{%=updated_at%}">{%=updated_at%}</time>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </script>
+
+    <script src="/blog/js/baiduTemplate.js"></script>
+    <script type="text/javascript">
+        var popular_repos = function(){
+
+            var baiduTpl = new Object();
+
+            var handleTpl = function(){
+                baiduTpl.popular_list = baidu.template("popular-list-template");
+            };
+
+            var handleGithub = function(){
+                var popularContainer = $(".popular-container");
+
+                var repos = "opencv,mlpack,Terasology".split(",");
+                for(var i in repos){
+                    var name = repos[i];
+                    $.get("https://api.github.com/repos/ThyrixYang/"+name,handle);
+                }
+
+                function handle(result){
+                    result.updated_at = result.updated_at.split("T")[0];
+                    if(result){
+                        var html = baiduTpl.popular_list(result);
+                        popularContainer.append(html);
+                        $(".geopattern").each(function(){           
+                            $(this).geopattern($(this).data('pattern-id'));
+                        });
+                    }
+                }
+            };
+
+            return {
+                init:function(){
+                    handleTpl();
+                    handleGithub();
+                }
+            }
+        }; 
+        $(popular_repos().init);
+    </script>
+
+        </div>
+    </div>
+
+    
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2016
+                <span title="yumemor">yumemor</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/yumemor/hexo-theme-primer" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/blog/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/categories/"  title="Categories">Categories</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/open-source/"  title="OpenSource">OpenSource</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/message/"  title="MessageBoard">MessageBoard</a>
+                  </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    <span class="octicon octicon-rss" style="color:orange;"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</footer>
+
+		<script src="/blog/js/geopattern.js"></script>
+		<script src="/blog/js/highlight.pack.js"></script>
+		<script src="/blog/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+		
+
+		
+
+		<script src="/blog/js/index.js"></script>
+
+		 <script src="/blog/js/popular_repo.js"></script> 
+
+	</body>
+</html>

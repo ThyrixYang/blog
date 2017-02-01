@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" prefix="og: http://ogp.me/ns#" class="han-init">
+<head>
+  <meta charset="utf-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+
+  <link rel="icon" href="/favicon.ico">
+  
+  <title>Learned, then implement | gcj2014r1a</title>
+  <link rel="stylesheet" href="/blog/css/style.css">
+  <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox-1.3.4.css">
+  <!--在这里倒入jquery 方便处理部分页面的jquery-->
+  <script src="https://cdn.staticfile.org/jquery/1.7/jquery.min.js" type="text/javascript" ></script>
+</head>
+
+<body>
+	<header class="site-header navfixed-false">
+  <div class="container">
+      <h1><a href="/blog/" title="Learned, then implement"><span class="octicon octicon-mark-github"></span> Learned, then implement</a></h1>
+      <nav class="site-header-nav" role="navigation">
+        
+              
+              <a href="/blog/"  class=" site-header-nav-item hvr-underline-from-center" title="Home">Home</a>
+        
+              
+              <a href="/blog/categories/"  class=" site-header-nav-item hvr-underline-from-center" title="Categories">Categories</a>
+        
+              
+              <a href="/blog/open-source/"  class=" site-header-nav-item hvr-underline-from-center" title="OpenSource">OpenSource</a>
+        
+              
+              <a href="/blog/message/"  class=" site-header-nav-item hvr-underline-from-center" title="MessageBoard">MessageBoard</a>
+        
+      </nav>
+  </div>
+</header>
+
+	
+<section class="collection-head geopattern" data-pattern-id="gcj2014r1a" >
+    <div class="container">
+        <div class="collection-title">
+            <h1 class="collection-header">
+                gcj2014r1a
+            </h1>
+            
+                <div class="collection-info">
+                    <span class="meta-info">
+                        <span class="octicon octicon-calendar"></span>
+                        <time datetime="2017-01-03T12:00:00.000Z" itemprop="datePublished">2017-01-03</time>
+                    </span>
+                    
+                        <span class="meta-info">
+                            <span class="octicon octicon-file-directory"></span>
+                            <a href='/categories/算法竞赛/' title=''>算法竞赛</a>
+                        </span>
+                    
+                </div>
+            
+        </div>
+    </div>
+</section>
+	<section class="container">
+    <div class="columns">
+        <!-- -->
+        <div class="column three-fourths">
+            <article class="article-content markdown-body">
+                <h4 id="problem-A"><a href="#problem-A" class="headerlink" title="problem A"></a>problem A</h4><p>注意到题目说明每个接头都是不一样的，那么变化之后的接头也是不一样的。</p>
+<p>枚举第一个接头对应哪个设备，然后那些列要变化就知道了。</p>
+<p>然后变完了看看能不能完全匹配上。这里我直接扔到vector里排序了。</p>
+<h4 id="problem-B"><a href="#problem-B" class="headerlink" title="problem B"></a>problem B</h4><p>显然先要枚举根。</p>
+<p>然后跑一个dfs,记录每个点的子树至少要删多少个点。</p>
+<p>如果一个点只有一个儿子就删了，多个儿子取能留下的点最多的两个。</p>
+<h4 id="problem-C"><a href="#problem-C" class="headerlink" title="problem C"></a>problem C</h4><p>这个题比较有趣。</p>
+<p>大概意思是有两个随机排列生成器，略有不同，大概如下：</p>
+<pre><code class="python">sq = range(0, n)
+for i in range(0, n):
+    j = random.randint(0, n - 1)
+    sq[i], sq[j] = sq[j], sq[i]  #就是swap(sq[i], sq[j])
+</code></pre>
+<pre><code class="python">sq = range(0, n)
+for i in range(0, n):
+    j = random.randint(i, n - 1)
+    sq[i], sq[j] = sq[j], sq[i]  #就是swap(sq[i], sq[j])
+</code></pre>
+<p>其中第一个是bad算法，生成的排列并非完全随机。第二个算法是good算法。</p>
+<p>问题是给出120个长度为1000的排列，让你判断给你的排列是用哪个算法生成的。</p>
+<p>生成排列的流程是：1.随机选一个算法。2.用1中选择的算法生成一个排列。</p>
+<p>显然这并不是一个常见的算法竞赛中会出现的题。</p>
+<p>题目中直言：即使是我们的最好的程序仍然有小概率不能通过。</p>
+<p>但是这毕竟不是icpc，谷歌说了算咯。。。毕竟这题确实有点意思。。。</p>
+<p>首先想到的是构造一个统计量，然后直接比较值（出题人给出的做法就是这样的）。</p>
+<p>但是我想的办法虽然能体现出一些差距，但是不够通过的。</p>
+<p>第一反应就是大表找找规律啥的。</p>
+<p>比如：</p>
+<p>逆序对个数，bad算法是少于good算法的，这个good算法的数值很稳定，不过差距不够大，没过去；</p>
+<p>偏向性，官方题解就是这个思路，如果打个表（我打的是n=5），看看就很清楚了。</p>
+<p>关键是如何构造统计量，我把不同位置的数字做差再乘方啥的类似方差之类的搞一搞之后似乎有门，</p>
+<p>但是也过不去，这个正确率比上面那个还要低，比较的标准也比较迷。。。没多试就去看题解了。。。。</p>
+<p>题解做法一：</p>
+<p>直接统计在位置i的数比i小的个数，然后。。。</p>
+<p>题解做法二：</p>
+<p>搞一个贝叶斯分类器。</p>
+<p>给一个排列s我们要求的东西是P(good|s)给定s求是good生成的概率。</p>
+<p>根据贝叶斯公式</p>
+<p>P(good|s) = P(s|good) <em> P(good) / (P(s|bad) </em> P(bad) + P(s|good) * P(good))</p>
+<p>由于是随机选一个生成器，所以P(good) == P(bad) == 0.5</p>
+<p>于是P(good|s) = P(s|good) / (P(s|bad) + P(s|good))</p>
+<p>已知P(s|good) = (1 / N)^N</p>
+<p>所以只要求P(s|bad)</p>
+<p>这里有点类似机器学习里的常用处理方法，如果p[i][j]位置i为数字j的概率和其他数字和位置的概率是相互独立的</p>
+<p>那么就可以很容易的搞出答案了。</p>
+<p>这个p数组可以比较简单的O(N^3)处理出来，<br>还可以优化到O(N^2)但是我没看懂代码(题解给的链接是tourist的代码orz)</p>
+<p>不过既然已经相互独立了，其实更简单的办法是直接随机，<br>由于不同的位置有N * N个，而每个随机排列要在N个位置上加一，</p>
+<p>所以大概平均一下，随机T次每个位置的数量级大概是T <em> N / (N </em> N) = T / N<br>所以我们随机N * N组的复杂度也是O(N ^ 3)同时精度也不算太差，大概有0.001的精度（而且这题也没法卡啊）。</p>
+<p>等有时间仔细看一下O(N ^ 2)的代码再补。</p>
+<p><a href="https://github.com/ThyrixYang/OnlineJudgeProblems/blob/master/gcj2014r1ac.cpp" target="_blank" rel="external">代码（贝叶斯方法）</a></p>
+<h5 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h5><p>1.官方题解</p>
+
+            </article>
+            
+                <div class="share">
+                    <!--开启分享-->
+<div class="share-component" data-disabled="google,twitter,facebook" data-description=""></div>
+
+<script src="/blog/js/share.min.js"></script>
+
+                </div>    
+            
+            
+                
+<div class="comments">
+    <div id="disqus_thread"></div>
+    <script>
+    /**
+    * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+    * LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+    */
+    /*
+    var disqus_config = function () {
+    this.page.url = PAGE_URL; // Replace PAGE_URL with your page's canonical URL variable
+    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    */
+    (function() { // DON'T EDIT BELOW THIS LINE
+    var d = document, s = d.createElement('script');
+
+    s.src = '//ThyrixYang.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+</div>
+            
+        </div>
+        <div class="column one-fourth">
+            
+                
+                
+
+
+<h3>Post Directory</h3>
+
+<div id="post-directory-module">
+	<section class="post-directory">
+		<p><strong class="toc-title">文章目录</strong></p>
+		<ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#problem-A"><span class="toc-text">problem A</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#problem-B"><span class="toc-text">problem B</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#problem-C"><span class="toc-text">problem C</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#reference"><span class="toc-text">reference</span></a></li></ol></li></ol>
+	</section>
+</div>
+            
+        </div>
+    </div>
+</section>
+
+<footer class="container">
+    <div class="site-footer" role="contentinfo">
+        <div class="copyright left mobile-block">
+                © 2016
+                <span title="yumemor">yumemor</span>
+                <a href="javascript:window.scrollTo(0,0)" class="right mobile-visible">TOP</a>
+        </div>
+
+        <ul class="site-footer-links right mobile-hidden">
+            <li>
+                <a href="javascript:window.scrollTo(0,0)" >TOP</a>
+            </li>
+        </ul>
+
+        <a href="https://github.com/yumemor/hexo-theme-primer" target="_blank" aria-label="view source code">
+            <span class="mega-octicon octicon-mark-github" title="GitHub"></span>
+        </a>
+
+        <ul class="site-footer-links mobile-hidden">
+            
+                  
+                  <li>
+                    <a href="/blog/"  title="Home">Home</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/categories/"  title="Categories">Categories</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/open-source/"  title="OpenSource">OpenSource</a>
+                  </li>
+            
+                  
+                  <li>
+                    <a href="/blog/message/"  title="MessageBoard">MessageBoard</a>
+                  </li>
+            
+            <li>
+                <a href="/atom.xml">
+                    <span class="octicon octicon-rss" style="color:orange;"></span>
+                </a>
+            </li>
+        </ul>
+    </div>
+</footer>
+
+		<script src="/blog/js/geopattern.js"></script>
+		<script src="/blog/js/highlight.pack.js"></script>
+		<script src="/blog/lib/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
+
+		
+			<script src="/blog/js/toc.js"></script>
+		
+
+		
+
+		<script src="/blog/js/index.js"></script>
+
+		 <script src="/blog/js/popular_repo.js"></script> 
+
+	</body>
+</html>
