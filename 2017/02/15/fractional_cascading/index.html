@@ -8,7 +8,7 @@
 
   <link rel="icon" href="/favicon.ico">
   
-  <title>Hit The Road | AboutMe</title>
+  <title>Hit The Road | fractional cascading</title>
   <link rel="stylesheet" href="/blog/css/style.css">
   <link rel="stylesheet" href="/blog/lib/fancybox/jquery.fancybox-1.3.4.css">
   <!--在这里倒入jquery 方便处理部分页面的jquery-->
@@ -38,18 +38,23 @@
 </header>
 
 	
-<section class="collection-head geopattern" data-pattern-id="AboutMe" >
+<section class="collection-head geopattern" data-pattern-id="fractional cascading" >
     <div class="container">
         <div class="collection-title">
             <h1 class="collection-header">
-                AboutMe
+                fractional cascading
             </h1>
             
                 <div class="collection-info">
                     <span class="meta-info">
                         <span class="octicon octicon-calendar"></span>
-                        <time datetime="2016-12-25T16:06:50.000Z" itemprop="datePublished">2016-12-26</time>
+                        <time datetime="2017-02-15T12:00:00.000Z" itemprop="datePublished">2017-02-15</time>
                     </span>
+                    
+                        <span class="meta-info">
+                            <span class="octicon octicon-file-directory"></span>
+                            <a href='/categories/算法/' title=''>算法</a>
+                        </span>
                     
                 </div>
             
@@ -61,11 +66,38 @@
         <!-- -->
         <div class="column three-fourths">
             <article class="article-content markdown-body">
-                <h2 id="About-Me"><a href="#About-Me" class="headerlink" title="About Me"></a>About Me</h2><p>非计算机类专业，ICPC退役狗。<br>打算学习一些实用技术，缓慢起步中。。。<br>想学的好多啊 <em>(:3 」∠)</em></p>
-<p>Email: ThyrixYang@gmail.com</p>
-<h2 id="About-This-Blog"><a href="#About-This-Blog" class="headerlink" title="About This Blog"></a>About This Blog</h2><p>目前的计划是：<br>至少每周一更。</p>
-<p>主要还是学习笔记之类的方便自己日后查阅。</p>
-<p>2017-2-2</p>
+                <blockquote>
+<p>问题：有k个长度分别为L1, L2, L3 … Lk的数组，每次询问一个数q，求每个数组里大于等于q的最小的数。</p>
+</blockquote>
+<p>如果只有一个数组，那么只需要对数组排序，然后二分即可，复杂度O(L)。</p>
+<p>对于k个数组的情况，直接二分k次。设总元素个数是n, 最坏复杂度就是O(k*log(n / k))，此时每个数组元素个数相等。</p>
+<p>fractional cascading(以下简称FC)是用来处理这种的询问的算法，单次询问时间复杂度是O(k + log n)，空间复杂度O(n)。</p>
+<hr>
+<p>FC的本质思想实际上类似线段树（或者排序二叉树），在一个数组中利用线段树查询需要O(L)的空间和O(logL)的时间。线段树的每个节点只要存储子树的中位数即可。将这个思路扩展到多个数组就可以得到FC。</p>
+<hr>
+<p>对于如下数据</p>
+<pre><code>L1 = 24, 64, 65, 80, 93
+L2 = 23, 25, 26
+L3 = 13, 44, 62, 66
+L4 = 11, 35, 46, 79, 81
+</code></pre><p>FC构造了一个表：</p>
+<pre><code>M1 = 24[0, 1], 25[1, 1], 35[1, 3], 64[1, 5], 65[2, 5], 79[3, 5], 80[3, 6], 93[4, 6]
+M2 = 23[0, 1], 25[1, 1], 26[2, 1], 35[3, 1], 62[3, 3], 79[3, 5]
+M3 = 13[0, 1], 35[1, 1], 44[1, 2], 62[2, 3], 66[3, 3], 79[4, 3]
+M4 = 11[0, 0], 35[1, 0], 46[2, 0], 79[3, 0], 81[4, 0] 
+</code></pre><p>Mi包含Li的所有元素，以及所有Mi+1下标为奇数（下标从零开始）的元素。</p>
+<p>对于Mi的每个元素，需要存两个值，第一个是在Li查询该元素得到的位置，第二个是在Mi+1中查询该元素得到的位置。</p>
+<p>在上表查询40的过程如下：</p>
+<ol>
+<li>首先在M1二分，得到元素64，根据64记录的第一个值得到L1中的位置是1.</li>
+<li>根据64记录的第二个值，在M2的位置是79，在L2的3（表尾的话需要特殊处理一下），同时还需要考虑前一个数(62)的情况，因为查询的数40在L1查询的结果只可能是这两个数在L1查询得到的位置。此时62符合情况。</li>
+<li>到了M3的3，重复上面的过程，找到62。与前一个数44比较，答案是44．</li>
+<li>在M4找到46</li>
+</ol>
+<hr>
+<p>时间复杂度只需要在M1做一次二分，然后在后面的k - 1个表里都是O(1)的。</p>
+<p>空间复杂度，由于每个表的元素在上一层至少会减半（相同元素需要合并），所以每个表Li的元素占用的空间是Li + Li / 2 + Li / 4 …..，显然这个求和结果是O(Li)的。查询的过程与线段树非常相似，只是存储方式有所不同。</p>
+<h3 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h3><p><a href="https://en.wikipedia.org/wiki/Fractional_cascading" target="_blank" rel="external">wiki</a></p>
 
             </article>
             
@@ -116,7 +148,7 @@
 <div id="post-directory-module">
 	<section class="post-directory">
 		<p><strong class="toc-title">文章目录</strong></p>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#About-Me"><span class="toc-text">About Me</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#About-This-Blog"><span class="toc-text">About This Blog</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#reference"><span class="toc-text">reference</span></a></li></ol>
 	</section>
 </div>
             
